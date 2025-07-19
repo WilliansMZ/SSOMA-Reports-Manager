@@ -1,5 +1,8 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using SSOMA.API.Configuration;
+using SSOMA.Application.Configuration;
+using SSOMA.Infrastructure.Configuration;
 using SSOMA.Infrastructure.DbContext;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(); // Habilita los controladores
 builder.Services.AddEndpointsApiExplorer(); // Necesario para Swagger
 builder.Services.AddSwaggerGen(); // Habilita Swagger UI
+
+// Agrega servicios de infraestructura
+builder.Services.AddInfrastructure();
+// Servicios API
+builder.Services.AddApiServices();
+//Servicios Application
+builder.Services.AddApplicationServices();
+
 
 // Add services to the container.
 builder.Services.AddControllers()

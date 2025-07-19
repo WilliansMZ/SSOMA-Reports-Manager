@@ -17,10 +17,10 @@ namespace SSOMA.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Evidencia>>> GetEvidencias()
+        public async Task<ActionResult<IEnumerable<Evidence>>> GetEvidencias()
         {
-            return await _context.Evidencias
-                .Include(e => e.Reporte)
+            return await _context.Evidences
+                .Include(e => e.Report)
                 .ToListAsync();
         }
     }

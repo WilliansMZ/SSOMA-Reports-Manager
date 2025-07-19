@@ -17,9 +17,9 @@ namespace SSOMA.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategorias()
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategorias()
         {
-            return await _context.Categorias.ToListAsync();
+            return await _context.Categories.ToListAsync();
         }
     }
 

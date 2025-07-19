@@ -17,9 +17,9 @@ namespace SSOMA.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsuarios()
         {
-            return await _context.Usuarios.ToListAsync();
+            return await _context.Users.ToListAsync();
         }
     }
 }

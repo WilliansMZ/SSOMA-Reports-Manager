@@ -7,24 +7,22 @@ namespace SSOMA.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccionesCorrectivaController : ControllerBase
+    public class CorrectiveActionsController : ControllerBase
     {
         private readonly SsomaDbContext _context;
 
-        public AccionesCorrectivaController(SsomaDbContext context)
+        public CorrectiveActionsController(SsomaDbContext context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AccionesCorrectiva>>> GetAccionesCorrectivas()
+        public async Task<ActionResult<IEnumerable<CorrectiveAction>>> GetCorrectiveActions()
         {
-            return await _context.AccionesCorrectivas
-                .Include(a => a.Reporte)
-                .Include(a => a.Responsable)
+            return await _context.CorrectiveActions
+                .Include(a => a.Report)
+                .Include(a => a.Responsible)
                 .ToListAsync();
         }
     }
-
-
 }

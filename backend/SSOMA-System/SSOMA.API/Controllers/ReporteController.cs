@@ -17,13 +17,13 @@ namespace SSOMA.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Reporte>>> GetReportes()
+        public async Task<ActionResult<IEnumerable<Report>>> GetReportes()
         {
-            return await _context.Reportes
-                .Include(r => r.Usuario)
-                .Include(r => r.Categoria)
-                .Include(r => r.AccionesCorrectivas)
-                .Include(r => r.Evidencia)
+            return await _context.Reports
+                .Include(r => r.User)
+                .Include(r => r.Category)
+                .Include(r => r.CorrectiveActions)
+                .Include(r => r.Evidences)
                 .ToListAsync();
         }
     }
