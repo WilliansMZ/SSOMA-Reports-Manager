@@ -18,7 +18,8 @@ namespace SSOMA.Infrastructure.Configuration
             services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
             
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+            
+            
 
             return services;
         }

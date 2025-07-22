@@ -16,6 +16,8 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
     public async Task<User?> GetByEmailAsync(string email)
     {
-        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        return await _context.Users
+            .Include(u => u.Role) // 👈 esto es clave
+            .FirstOrDefaultAsync(u => u.Email == email);
     }
 }

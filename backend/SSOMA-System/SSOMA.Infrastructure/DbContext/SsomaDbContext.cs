@@ -18,6 +18,8 @@ public partial class SsomaDbContext : Microsoft.EntityFrameworkCore.DbContext
 
     public virtual DbSet<Report> Reports { get; set; }
 
+    public virtual DbSet<Role> Roles { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -152,6 +154,20 @@ public partial class SsomaDbContext : Microsoft.EntityFrameworkCore.DbContext
                 .HasConstraintName("reports_user_id_fkey");
         });
 
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("roles_pkey");
+
+            entity.ToTable("roles");
+
+            entity.HasIndex(e => e.Name, "roles_name_key").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
+        });
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("users_pkey");
@@ -180,9 +196,7 @@ public partial class SsomaDbContext : Microsoft.EntityFrameworkCore.DbContext
                 .HasMaxLength(15)
                 .HasColumnName("national_id");
             entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
-            entity.Property(e => e.Role)
-                .HasMaxLength(50)
-                .HasColumnName("role");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .HasDefaultValueSql("'active'::character varying")
@@ -191,6 +205,11 @@ public partial class SsomaDbContext : Microsoft.EntityFrameworkCore.DbContext
                 .HasDefaultValueSql("now()")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("updated_at");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Users)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_users_roles");
         });
 
         OnModelCreatingPartial(modelBuilder);

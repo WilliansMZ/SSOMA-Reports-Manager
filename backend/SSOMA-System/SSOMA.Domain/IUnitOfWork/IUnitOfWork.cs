@@ -13,7 +13,7 @@ public interface IUnitOfWork : IDisposable
     IGenericRepository<CorrectiveAction> AccionesCorrectivas { get; }
     
     //repositorios especificos
-    IUserRepository Users { get; }
+    IUserRepository UserRepository { get; }
 
     Task<int> SaveAsync();
 }

@@ -22,7 +22,7 @@ public class UnitOfWork : IUnitOfWork
     
     //Repositorios Especificos
     private IUserRepository? _users;
-    public IUserRepository Users => _users ??= new UserRepository(_context); // Repositorio personalizado
+    public IUserRepository UserRepository => _users ??= new UserRepository(_context); // Repositorio personalizado
 
     public UnitOfWork(SsomaDbContext context)
     {

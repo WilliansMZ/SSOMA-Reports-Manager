@@ -15,7 +15,8 @@ builder.Services.AddSwaggerGen(); // Habilita Swagger UI
 // Agrega servicios de infraestructura
 builder.Services.AddInfrastructure();
 // Servicios API
-builder.Services.AddApiServices();
+builder.Services.AddApiServices(builder.Configuration);
+
 //Servicios Application
 builder.Services.AddApplicationServices();
 

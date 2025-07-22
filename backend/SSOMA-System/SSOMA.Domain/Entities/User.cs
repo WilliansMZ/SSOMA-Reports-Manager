@@ -12,8 +12,6 @@ public partial class User
 
     public string NationalId { get; set; } = null!;
 
-    public string Role { get; set; } = null!;
-
     public string PasswordHash { get; set; } = null!;
 
     public DateTime? CreatedAt { get; set; }
@@ -22,7 +20,11 @@ public partial class User
 
     public string? Status { get; set; }
 
+    public int RoleId { get; set; }
+
     public virtual ICollection<CorrectiveAction> CorrectiveActions { get; set; } = new List<CorrectiveAction>();
 
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
+
+    public virtual Role Role { get; set; } = null!;
 }

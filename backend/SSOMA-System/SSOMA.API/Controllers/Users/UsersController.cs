@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SSOMA.Application.DTOs.Users;
 using SSOMA.Application.Features.Users.Commands.CreateUser;
@@ -21,7 +22,9 @@ namespace SSOMA.API.Controllers.Users
         }
 
         // POST: api/Users
+        
         [HttpPost]
+       // [Authorize(Roles = "ssoma_manager")] // Solo usuarios con rol "admin"
         public async Task<IActionResult> Create([FromBody] CreateUserCommand command)
         {
             var userId = await _mediator.Send(command);

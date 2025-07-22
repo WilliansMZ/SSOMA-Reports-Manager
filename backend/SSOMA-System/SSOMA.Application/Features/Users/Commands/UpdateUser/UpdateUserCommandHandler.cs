@@ -29,7 +29,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, bool>
         user.LastName = request.LastName;
         user.Email = request.Email;
         user.NationalId = request.NationalId;
-        user.Role = request.Role;
+        user.RoleId = request.RoleId;
 
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
