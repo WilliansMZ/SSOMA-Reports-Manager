@@ -1,7 +1,8 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SSOMA.Domain.IRepositories;
 using SSOMA.Infrastructure.DbContext;
-
+using Microsoft.EntityFrameworkCore;
 namespace SSOMA.Infrastructure.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
@@ -28,6 +29,11 @@ namespace SSOMA.Infrastructure.Repositories
         public async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
+        }
+        
+        public async Task<T?> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.FirstOrDefaultAsync(predicate);
         }
 
         public void Update(T entity)
