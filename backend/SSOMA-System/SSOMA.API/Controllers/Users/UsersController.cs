@@ -24,7 +24,7 @@ namespace SSOMA.API.Controllers.Users
         // POST: api/Users
         
         [HttpPost]
-       // [Authorize(Roles = "ssoma_manager")] // Solo usuarios con rol "admin"
+       // [Authorize(Roles = "admin")] // Solo usuarios con rol "admin"
         public async Task<IActionResult> Create([FromBody] CreateUserCommand command)
         {
             var userId = await _mediator.Send(command);

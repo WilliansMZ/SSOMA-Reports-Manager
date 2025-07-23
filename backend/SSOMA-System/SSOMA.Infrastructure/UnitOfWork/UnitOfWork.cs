@@ -1,6 +1,7 @@
 
 using SSOMA.Domain.Entities;
 using SSOMA.Domain.IRepositories;
+using SSOMA.Domain.IRepositories.UserRoles;
 using SSOMA.Domain.IRepositories.Users;
 using SSOMA.Domain.IUnitOfWork;
 using SSOMA.Infrastructure.DbContext;
@@ -19,10 +20,13 @@ public class UnitOfWork : IUnitOfWork
     public IGenericRepository<Evidence> Evidencias { get; }
     public IGenericRepository<CorrectiveAction> AccionesCorrectivas { get; }
     
+    public IGenericRepository<Role> Roles { get; }
+    
     
     //Repositorios Especificos
     private IUserRepository? _users;
     public IUserRepository UserRepository => _users ??= new UserRepository(_context); // Repositorio personalizado
+    public IRoleRepository RoleRepository => new RoleRepository(_context);
 
     public UnitOfWork(SsomaDbContext context)
     {
@@ -32,6 +36,7 @@ public class UnitOfWork : IUnitOfWork
         Categorias = new GenericRepository<Category>(_context);
         Evidencias = new GenericRepository<Evidence>(_context);
         AccionesCorrectivas = new GenericRepository<CorrectiveAction>(_context);
+        Roles = new GenericRepository<Role>(_context);
     }
 
     public async Task<int> SaveAsync()

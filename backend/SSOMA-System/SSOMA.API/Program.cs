@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using SSOMA.API.Configuration;
+using SSOMA.API.Middlewares;
 using SSOMA.Application.Configuration;
 using SSOMA.Infrastructure.Configuration;
 using SSOMA.Infrastructure.DbContext;
@@ -41,6 +42,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseWhen(context =>
+        !context.Request.Path.StartsWithSegments("/api/Auth"),
+    appBuilder =>
+    {
+        appBuilder.UseMiddleware<JwtValidationMiddleware>();
+    });
 
 app.UseAuthorization();
 
