@@ -18,60 +18,72 @@ public class JwtValidationMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-
-        if (string.IsNullOrWhiteSpace(token))
+        if (!context.Request.Headers.TryGetValue("Authorization", out var authHeader))
         {
-            await RespondWithError(context, 401, "❌ Token requerido.");
+            // No bloquea, deja que JwtBearer haga su trabajo
+            await _next(context);
+            return;
+        }
+
+        var token = authHeader.ToString().Split(" ").LastOrDefault();
+
+        if (string.IsNullOrEmpty(token))
+        {
+            await RespondWithError(context, 401, "❌ Token JWT no proporcionado.");
             return;
         }
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
 
+        var validationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = _configuration["Jwt:Issuer"],
+            ValidAudience = _configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ClockSkew = TimeSpan.Zero
+        };
+
         try
         {
-            var parameters = new TokenValidationParameters
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
+
+            if (validatedToken is not JwtSecurityToken jwtToken ||
+                !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = _configuration["Jwt:Issuer"],
-                ValidAudience = _configuration["Jwt:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ClockSkew = TimeSpan.Zero
-            };
-
-            var principal = tokenHandler.ValidateToken(token, parameters, out SecurityToken validatedToken);
-
-            var roleClaim = principal.Claims.FirstOrDefault(c =>
-                c.Type == "role" || c.Type == ClaimTypes.Role || c.Type.Contains("claims/role"));
-
-            if (roleClaim == null || string.IsNullOrEmpty(roleClaim.Value))
-            {
-                await RespondWithError(context, 403, "❌ Rol no válido o no presente en el token.");
+                await RespondWithError(context, 401, "❌ Token no válido.");
                 return;
             }
 
             context.User = principal;
-
-            await _next(context);
+            await _next(context); // Continuar
         }
         catch (SecurityTokenExpiredException)
         {
             await RespondWithError(context, 401, "❌ Token expirado.");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            await RespondWithError(context, 401, "❌ Token inválido.");
+            await RespondWithError(context, 401, $"❌ Token inválido: {ex.Message}");
         }
     }
-
-    private static async Task RespondWithError(HttpContext context, int statusCode, string message)
+    private async Task RespondWithError(HttpContext context, int statusCode, string message)
     {
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
-        await context.Response.WriteAsync($"{{\"error\": \"{message}\"}}");
+
+        var response = new
+        {
+            error = true,
+            statusCode = statusCode,
+            message = message
+        };
+
+        await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(response));
     }
+
 }

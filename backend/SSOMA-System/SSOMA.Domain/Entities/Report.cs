@@ -8,8 +8,6 @@ public partial class Report
 
     public string Description { get; set; } = null!;
 
-    public string Type { get; set; } = null!;
-
     public DateOnly ReportDate { get; set; }
 
     public int UserId { get; set; }

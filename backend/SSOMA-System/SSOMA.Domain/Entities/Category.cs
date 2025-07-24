@@ -8,9 +8,13 @@ public partial class Category
 
     public string? Description { get; set; }
 
+    public int TypeId { get; set; }
+
     public DateTime? CreatedAt { get; set; }
 
     public string? Status { get; set; }
 
     public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
+
+    public virtual CategoryType Type { get; set; } = null!;
 }

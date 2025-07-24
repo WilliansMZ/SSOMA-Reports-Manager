@@ -28,7 +28,7 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("register")]
-    [Authorize(Roles = "admin")] // Solo usuarios con rol "admin"
+    //[Authorize(Roles = "admin")] // Solo usuarios con rol "admin"
     [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] RegisterUserRequestDto request)
     {

@@ -1,8 +1,9 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SSOMA.Domain.IRepositories;
-using SSOMA.Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
+using SSOMA.Infrastructure.DbContext;
+
 namespace SSOMA.Infrastructure.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class

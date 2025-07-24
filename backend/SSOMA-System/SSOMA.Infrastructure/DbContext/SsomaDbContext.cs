@@ -12,6 +12,8 @@ public partial class SsomaDbContext : Microsoft.EntityFrameworkCore.DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
+    public virtual DbSet<CategoryType> CategoryTypes { get; set; }
+
     public virtual DbSet<CorrectiveAction> CorrectiveActions { get; set; }
 
     public virtual DbSet<Evidence> Evidences { get; set; }
@@ -45,6 +47,26 @@ public partial class SsomaDbContext : Microsoft.EntityFrameworkCore.DbContext
                 .HasMaxLength(20)
                 .HasDefaultValueSql("'active'::character varying")
                 .HasColumnName("status");
+            entity.Property(e => e.TypeId).HasColumnName("type_id");
+
+            entity.HasOne(d => d.Type).WithMany(p => p.Categories)
+                .HasForeignKey(d => d.TypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("categories_type_id_fkey");
+        });
+
+        modelBuilder.Entity<CategoryType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("category_types_pkey");
+
+            entity.ToTable("category_types");
+
+            entity.HasIndex(e => e.Name, "category_types_name_key").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<CorrectiveAction>(entity =>
@@ -135,9 +157,6 @@ public partial class SsomaDbContext : Microsoft.EntityFrameworkCore.DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(150)
                 .HasColumnName("title");
-            entity.Property(e => e.Type)
-                .HasMaxLength(50)
-                .HasColumnName("type");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnType("timestamp without time zone")

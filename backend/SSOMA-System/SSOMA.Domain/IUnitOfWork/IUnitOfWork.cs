@@ -1,5 +1,6 @@
 using SSOMA.Domain.Entities;
 using SSOMA.Domain.IRepositories;
+using SSOMA.Domain.IRepositories.Reports;
 using SSOMA.Domain.IRepositories.UserRoles;
 using SSOMA.Domain.IRepositories.Users;
 
@@ -17,5 +18,6 @@ public interface IUnitOfWork : IDisposable
     //repositorios especificos
     IUserRepository UserRepository { get; }
     IRoleRepository RoleRepository { get; }
+    IReportRepository ReportRepository { get; }
     Task<int> SaveAsync();
 }

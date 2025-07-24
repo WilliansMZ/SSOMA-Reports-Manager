@@ -44,13 +44,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-app.UseWhen(context =>
-        !context.Request.Path.StartsWithSegments("/api/Auth"),
-    appBuilder =>
-    {
-        appBuilder.UseMiddleware<JwtValidationMiddleware>();
-    });
-
 app.UseAuthorization();
 
 // Mapear los controladores

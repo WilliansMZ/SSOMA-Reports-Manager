@@ -1,36 +1,41 @@
-
 using SSOMA.Domain.Entities;
 using SSOMA.Domain.IRepositories;
+using SSOMA.Domain.IRepositories.Reports;
 using SSOMA.Domain.IRepositories.UserRoles;
 using SSOMA.Domain.IRepositories.Users;
 using SSOMA.Domain.IUnitOfWork;
 using SSOMA.Infrastructure.DbContext;
 using SSOMA.Infrastructure.Repositories;
+using SSOMA.Infrastructure.Repositories.Reports;
 
 
 namespace SSOMA.Infrastructure.UnitOfWork;
 
-public class UnitOfWork : IUnitOfWork
+public class UnitOfWork : IUnitOfWork, IDisposable
 {
     private readonly SsomaDbContext _context;
 
+    // Genéricos
     public IGenericRepository<User> Usuarios { get; }
     public IGenericRepository<Report> Reportes { get; }
     public IGenericRepository<Category> Categorias { get; }
     public IGenericRepository<Evidence> Evidencias { get; }
     public IGenericRepository<CorrectiveAction> AccionesCorrectivas { get; }
-    
     public IGenericRepository<Role> Roles { get; }
-    
-    
-    //Repositorios Especificos
-    private IUserRepository? _users;
-    public IUserRepository UserRepository => _users ??= new UserRepository(_context); // Repositorio personalizado
-    public IRoleRepository RoleRepository => new RoleRepository(_context);
+
+    // Específicos
+    private IUserRepository? _userRepository;
+    private IRoleRepository? _roleRepository;
+    private IReportRepository? _reportRepository;
+
+    public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context);
+    public IRoleRepository RoleRepository => _roleRepository ??= new RoleRepository(_context);
+    public IReportRepository ReportRepository => _reportRepository ??= new ReportRepository(_context);
 
     public UnitOfWork(SsomaDbContext context)
     {
-        _context = context;
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+
         Usuarios = new GenericRepository<User>(_context);
         Reportes = new GenericRepository<Report>(_context);
         Categorias = new GenericRepository<Category>(_context);
@@ -47,5 +52,6 @@ public class UnitOfWork : IUnitOfWork
     public void Dispose()
     {
         _context.Dispose();
+        GC.SuppressFinalize(this);
     }
 }
