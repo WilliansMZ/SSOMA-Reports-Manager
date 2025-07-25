@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SSOMA.Application.DTOs.Report;
 using SSOMA.Application.Features.Reports.Commands;
+using SSOMA.Application.Features.Reports.Commands.Filter;
 using SSOMA.Application.Features.Reports.Queries;
 
 namespace SSOMA.API.Controllers.Reports
@@ -36,6 +37,32 @@ namespace SSOMA.API.Controllers.Reports
             if (result == null)
                 return NotFound();
 
+            return Ok(result);
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _mediator.Send(new GetAllReportsQuery());
+            return Ok(result);
+        }
+        [HttpGet("{id}/detail")]
+        [Authorize]
+        public async Task<IActionResult> GetDetailById(int id)
+        {
+            var query = new GetReportDetailByIdQuery(id);
+            var result = await _mediator.Send(query);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+        [HttpPost("filter")]
+        public async Task<IActionResult> FilterReports([FromBody] ReportFilterRequestDto filter)
+        {
+            var command = new FilterReportsCommand(filter);
+            var result = await _mediator.Send(command);
             return Ok(result);
         }
     }
